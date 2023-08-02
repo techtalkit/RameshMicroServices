@@ -7,6 +7,7 @@ import net.techtalkit.employeeservice.dto.APIResponseDto;
 import net.techtalkit.employeeservice.dto.DepartmentDto;
 import net.techtalkit.employeeservice.dto.EmployeeDto;
 import net.techtalkit.employeeservice.entity.Employee;
+import net.techtalkit.employeeservice.mapper.EmployeeMapper;
 import net.techtalkit.employeeservice.repository.EmployeeRepositry;
 import net.techtalkit.employeeservice.service.APIClient;
 import net.techtalkit.employeeservice.service.EmployeeService;
@@ -28,21 +29,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-        Employee employee=new Employee(
-                employeeDto.getId(),
-                employeeDto.getFirstName(),
-                employeeDto.getLastName(),
-                employeeDto.getEmail(),
-                employeeDto.getDepartmentCode()
-        );
+        // This will convert departdto to the department jpa entity
+        Employee employee= EmployeeMapper.mapToEmployee(employeeDto);
         Employee savedEmployee=employeeRepositry.save(employee);
-        EmployeeDto savedEmployeeDto=new EmployeeDto(
-                savedEmployee.getId(),
-                savedEmployee.getFirstName(),
-                savedEmployee.getLastName(),
-                savedEmployee.getEmail(),
-                savedEmployee.getDepartmentCode()
-        );
+        //Below code will convert department jpa entity to the department dto
+        EmployeeDto savedEmployeeDto=EmployeeMapper.mapToEmployeeDto(savedEmployee);
         return savedEmployeeDto;
     }
 
@@ -63,13 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 //Here we are using block method to make sure about asynchronus call
                 .block();
        // DepartmentDto departmentDto=apiClient.getDepartment(employee.getDepartmentCode());
-        EmployeeDto employeeDto=new EmployeeDto(
-                employee.getId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getEmail(),
-                employee.getDepartmentCode()
-        );
+        EmployeeDto employeeDto=EmployeeMapper.mapToEmployeeDto(employee);
         APIResponseDto  apiResponseDto=new APIResponseDto();
         apiResponseDto.setEmployee(employeeDto);
         apiResponseDto.setDepartment(departmentDto);
@@ -83,13 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         departmentDto.setDepartmentName("R&D");
         departmentDto.setDepartmentCode("RD001");
         departmentDto.setDepartmentDescription("Research and development department");
-        EmployeeDto employeeDto=new EmployeeDto(
-                employee.getId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getEmail(),
-                employee.getDepartmentCode()
-        );
+        EmployeeDto employeeDto=EmployeeMapper.mapToEmployeeDto(employee);
         APIResponseDto  apiResponseDto=new APIResponseDto();
         apiResponseDto.setEmployee(employeeDto);
         //Below added the departmentdto to the API response.

@@ -3,6 +3,7 @@ package net.techtalkit.departmentservice.service.impl;
 import lombok.AllArgsConstructor;
 import net.techtalkit.departmentservice.dto.DepartmentDto;
 import net.techtalkit.departmentservice.entities.Department;
+import net.techtalkit.departmentservice.mapper.DepartmentMapper;
 import net.techtalkit.departmentservice.repository.DepartmentRepository;
 import net.techtalkit.departmentservice.service.DepartmentService;
 import org.springframework.stereotype.Service;
@@ -14,31 +15,19 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto saveDepartment(DepartmentDto departmentDto) {
-        Department department=new Department(
-                departmentDto.getId(),
-                departmentDto.getDepartmentName(),
-                departmentDto.getDepartmentDescription(),
-                departmentDto.getDepartmentCode()
-        );
+        //Below code will convert departmentdto to the department jpa entity
+        Department department= DepartmentMapper.mapToDepartment(departmentDto);
         Department savedDepartment=departmentRepository.save(department);
-        DepartmentDto saveddepartmentDto=new DepartmentDto(
-                savedDepartment.getId(),
-                savedDepartment.getDepartmentname(),
-                savedDepartment.getDepartmentDescription(),
-                savedDepartment.getDepartmentCode()
-        );
+        //Below code will convert department jpa entity to the department dto
+        DepartmentDto saveddepartmentDto=DepartmentMapper.mapToDepartmentDto(savedDepartment);
         return saveddepartmentDto;
     }
 
     @Override
     public DepartmentDto getDepartmentByCode(String departmentCode) {
         Department department=departmentRepository.findByDepartmentCode(departmentCode);
-        DepartmentDto departmentDto=new DepartmentDto(
-                department.getId(),
-                department.getDepartmentname(),
-                department.getDepartmentDescription(),
-                department.getDepartmentCode()
-        );
+        //This will convert department jpa entity to department dto
+        DepartmentDto departmentDto=DepartmentMapper.mapToDepartmentDto(department);
         return departmentDto;
     }
 }
