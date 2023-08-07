@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import net.techtalkit.employeeservice.dto.APIResponseDto;
 import net.techtalkit.employeeservice.dto.DepartmentDto;
 import net.techtalkit.employeeservice.dto.EmployeeDto;
+import net.techtalkit.employeeservice.dto.OrganizationDto;
 import net.techtalkit.employeeservice.entity.Employee;
 import net.techtalkit.employeeservice.mapper.EmployeeMapper;
 import net.techtalkit.employeeservice.repository.EmployeeRepositry;
@@ -54,10 +55,16 @@ public class EmployeeServiceImpl implements EmployeeService {
                 //Here we are using block method to make sure about asynchronus call
                 .block();
        // DepartmentDto departmentDto=apiClient.getDepartment(employee.getDepartmentCode());
+        OrganizationDto organizationDto=webClient.get()
+                .uri("http://localhost:8585/api/organizations/"+employee.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
         EmployeeDto employeeDto=EmployeeMapper.mapToEmployeeDto(employee);
         APIResponseDto  apiResponseDto=new APIResponseDto();
         apiResponseDto.setEmployee(employeeDto);
         apiResponseDto.setDepartment(departmentDto);
+        apiResponseDto.setOrganization(organizationDto);
         return apiResponseDto;
     }
     public APIResponseDto getDefaultDeaprtment(Long employeeid, Exception exception){
